@@ -25,6 +25,48 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+
+apply plugin: 'com.mob.sdk'
+MobSDK {
+    appKey "35e602009db1c"
+    appSecret "14e40b26f29805b62a5525b174f746ab"
+    ShareSDK {
+        loopShare true 
+        devInfo {
+            Wechat {
+                id 4
+                sortId 4
+                appId "wxf28f96d8674d9c5a"
+                appSecret "71b09961b13e424793f66332144ec03b"
+                userName "gh_afb25ac019c9"
+                path "pages/index/index.html?id=1"
+                withShareTicket true
+                miniprogramType 0
+                bypassApproval false
+                enable true
+            }
+
+              WechatMoments {
+                id 5
+                sortId 5
+                appId "wxf28f96d8674d9c5a"
+                appSecret "71b09961b13e424793f66332144ec03b"
+                bypassApproval false
+                enable true
+            }
+
+              WechatFavorite {
+                id 6
+                sortId 6
+                appId "wxf28f96d8674d9c5a"
+                appSecret "71b09961b13e424793f66332144ec03b"
+                bypassApproval false
+                enable true
+            }
+        }
+    }
+  }
+
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
@@ -45,7 +87,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.meishayong.acglove"
+        applicationId "com.lianhongda.shop"
         minSdkVersion 21
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
@@ -53,6 +95,14 @@ android {
     }
 
    signingConfigs {
+
+        debug{
+            keyAlias 'testalias'
+            keyPassword '123456'
+            storeFile file('test.keystore')
+            storePassword '123456'
+        }
+
        release {
            keyAlias keystoreProperties['keyAlias']
            keyPassword keystoreProperties['keyPassword']
@@ -62,6 +112,8 @@ android {
    }
 
     buildTypes {
+       
+
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.

@@ -4,16 +4,16 @@ import 'dart:convert';
 import 'package:acg_love/app_provider.dart';
 import 'package:acg_love/backend/api_requests/api_calls.dart';
 import 'package:acg_love/flutter_flow/flutter_flow_theme.dart';
+import 'package:acg_love/flutter_flow/flutter_flow_toggle_icon.dart';
 import 'package:acg_love/flutter_flow/flutter_flow_util.dart';
 import 'package:acg_love/flutter_flow/flutter_flow_widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sharesdk_plugin/sharesdk_plugin.dart';
 
 class LoginPageWidget extends ConsumerStatefulWidget {
   const LoginPageWidget({Key key}) : super(key: key);
@@ -34,6 +34,7 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
   final loginFormKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   String codeText = '获取验证码';
+  bool isAgree = false;
 
   Timer _timer;
   int _countdownTime = 60;
@@ -52,6 +53,55 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // 隐私协议
+    Row Function() renderPolicy = () => Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ToggleIcon(
+              onPressed: () async {
+                setState(() => isAgree = !isAgree);
+                print('隐私协议');
+                if (isAgree) {
+                  SharesdkPlugin.uploadPrivacyPermissionStatus(1,
+                      (bool success) {
+                    print('success:$success');
+                  });
+                }
+              },
+              value: isAgree,
+              onIcon: Icon(
+                Icons.check_box,
+                color: FlutterFlowTheme.of(context).primaryBtnText,
+                size: 18,
+              ),
+              offIcon: Icon(
+                Icons.check_box_outline_blank,
+                color: FlutterFlowTheme.of(context).primaryBtnText,
+                size: 18,
+              ),
+            ),
+            Text(
+              '我已阅读并同意',
+              style: FlutterFlowTheme.of(context).bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: FlutterFlowTheme.of(context).primaryBtnText,
+                    fontWeight: FontWeight.w200,
+                  ),
+            ),
+            Text(
+              '《隐私协议》',
+              style: FlutterFlowTheme.of(context).bodyText1.override(
+                    fontFamily: 'Poppins',
+                    color: FlutterFlowTheme.of(context).secondaryColor,
+                    fontWeight: FontWeight.w200,
+                    decoration: TextDecoration.underline,
+                  ),
+            ),
+          ],
+        );
+
     // 注册方法
     registerAction() async {
       print('Button-register pressed ...');
@@ -353,26 +403,42 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
                     ),
                   ),
                   Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF0F1113),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 5,
-                          color: Color(0x3314181B),
-                          offset: Offset(0, 2),
-                        )
-                      ],
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: AlignmentDirectional(0, 0),
-                    child: FaIcon(
-                      FontAwesomeIcons.apple,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF0F1113),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 5,
+                            color: Color(0x3314181B),
+                            offset: Offset(0, 2),
+                          )
+                        ],
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: AlignmentDirectional(0, 0),
+                      child: InkWell(
+                        onTap: () {
+                          print('Button-Wechat pressed ...');
+                          SharesdkPlugin.auth(
+                              ShareSDKPlatforms.wechatSession, Map(),
+                              (SSDKResponseState state, dynamic user,
+                                  SSDKError error) {
+                            print('error:$error');
+                          });
+                          SharesdkPlugin.getUserInfo(
+                              ShareSDKPlatforms.wechatSession,
+                              (SSDKResponseState state, dynamic user,
+                                  SSDKError error) {
+                            print('user:$user');
+                          });
+                        },
+                        child: FaIcon(
+                          FontAwesomeIcons.weixin,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      )),
                   Container(
                     width: 50,
                     height: 50,
@@ -418,6 +484,7 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
                 ],
               ),
             ),
+            renderPolicy()
           ],
         ),
       ),
@@ -789,6 +856,7 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
 
     return Scaffold(
       key: scaffoldKey,
+      resizeToAvoidBottomInset: false,
       backgroundColor: FlutterFlowTheme.of(context).primaryColor,
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),

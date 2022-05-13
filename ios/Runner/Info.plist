@@ -2,10 +2,30 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>MOBAppSecret</key>
-	<string>14e40b26f29805b62a5525b174f746ab</string>
-	<key>MOBAppKey</key>
-	<string>35e602009db1c</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbauth2</string>
+		<string>fbauth</string>
+		<string>fbapi20130214</string>
+		<string>fbapi</string>
+		<string>fbshareextension</string>
+		<string>fbapi20160328</string>
+		<string>fbapi20150629</string>
+		<string>twitterauth</string>
+		<string>mqq</string>
+		<string>mqqapi</string>
+		<string>timapi</string>
+		<string>mqqopensdkminiapp</string>
+		<string>mqqopensdknopasteboard</string>
+		<string>mqqopensdkapiV4</string>
+		<string>wtloginmqq2</string>
+		<string>mqqopensdkapiV3</string>
+		<string>mqqopensdkapiV2</string>
+		<string>mqqOpensdkSSoLogin</string>
+		<string>weixinULAPI</string>
+		<string>weixin</string>
+		<string>wechat</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -24,10 +44,31 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string></string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wx617c77c82218ea2c</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>MOBAppKey</key>
+	<string>35e602009db1c</string>
+	<key>MOBAppSecret</key>
+	<string>14e40b26f29805b62a5525b174f746ab</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

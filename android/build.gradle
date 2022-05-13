@@ -3,19 +3,31 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+
+
+        // 1.添加MobSDK Maven地址
+        maven {
+            url "https://mvn.mob.com/android"
+        }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        
+        // 2.注册MobSDK
+        classpath "com.mob.sdk:MobSDK:+"
     }
 }
 
 allprojects {
+
+   
+
+
     repositories {
         google()
         mavenCentral()
+
     }
 }
 

@@ -1,4 +1,4 @@
-package com.meishayong.acglove
+package com.lianhongda.shop
 
 import io.flutter.embedding.android.FlutterActivity
 

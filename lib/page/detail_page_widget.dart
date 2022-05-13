@@ -1,4 +1,6 @@
 import 'package:acg_love/backend/api_requests/api_calls.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sharesdk_plugin/sharesdk_plugin.dart';
 
 import '../flutter_flow/flutter_flow_expanded_image_view.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
@@ -7,7 +9,6 @@ import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:share_plus/share_plus.dart';
 
 class DetailPageWidget extends StatefulWidget {
   const DetailPageWidget({Key key, this.id}) : super(key: key);
@@ -23,7 +24,7 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
   @override
   Widget build(BuildContext context) {
     // 头部导航条
-    Align Function() renderAppbar = () {
+    Align Function(Map<String, dynamic>) renderAppbar = (figure) {
       return Align(
         alignment: AlignmentDirectional(0, -0.87),
         child: Padding(
@@ -88,7 +89,31 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                     size: 20,
                   ),
                   onPressed: () async {
-                    await Share.share('');
+                    // await Share.share(figure['name']);
+                    SSDKMap params = SSDKMap()
+                      ..setGeneral(
+                          "title",
+                          "text",
+                          [
+                            "https://wx3.sinaimg.cn/large/006nLajtly1fpi9ikmj1kj30dw0dwwfq.jpg"
+                          ],
+                          "https://wx3.sinaimg.cn/large/006nLajtly1fpi9ikmj1kj30dw0dwwfq.jpg",
+                          "",
+                          "https://www.mob.com/",
+                          "https://wx4.sinaimg.cn/large/006WfoFPly1fw9612f17sj30dw0dwgnd.jpg",
+                          "https://i.y.qq.com/v8/playsong.html?hostuin=0&songid=&songmid=002x5Jje3eUkXT&_wv=1&source=qq&appshare=iphone&media_mid=002x5Jje3eUkXT",
+                          "https://f1.webshare.mob.com/dvideo/demovideos.mp4",
+                          "",
+                          SSDKContentTypes.image);
+                    SharesdkPlugin.showMenu(null, null, params,
+                        (SSDKResponseState state,
+                            ShareSDKPlatform platform,
+                            dynamic userData,
+                            dynamic contentEntity,
+                            SSDKError error) {
+                      print('${error.rawData}');
+                      EasyLoading.showToast('${error.rawData}');
+                    });
                   },
                 ),
               ),
@@ -484,7 +509,7 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                   alignment: AlignmentDirectional(0, -1),
                   children: [
                     renderCover(figureEntity['cover']),
-                    renderAppbar(),
+                    renderAppbar(figureEntity),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 100, 0, 0),
                       child: SingleChildScrollView(
