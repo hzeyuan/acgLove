@@ -1,10 +1,10 @@
 buildscript {
     ext.kotlin_version = '1.5.10'
     repositories {
-        google()
-        mavenCentral()
-
-
+        // google()
+        maven { url 'https://maven.aliyun.com/repository/google'} // google()
+         maven { url 'https://maven.aliyun.com/repository/jcenter'} // jcenter()
+        // mavenCentral()
         // 1.添加MobSDK Maven地址
         maven {
             url "https://mvn.mob.com/android"
@@ -21,12 +21,13 @@ buildscript {
 
 allprojects {
 
-   
 
 
     repositories {
-        google()
-        mavenCentral()
+        // google()
+         maven { url 'https://maven.aliyun.com/repository/google'} 
+          maven { url 'https://maven.aliyun.com/repository/jcenter'} // jcenter()
+        // mavenCentral()
 
     }
 }

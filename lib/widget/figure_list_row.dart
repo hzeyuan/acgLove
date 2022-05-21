@@ -1,5 +1,6 @@
 import 'package:acg_love/flutter_flow/flutter_flow_theme.dart';
 import 'package:acg_love/page/detail_page_widget.dart';
+import 'package:acg_love/widget/hzy_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -27,7 +28,7 @@ class FigureListRowWidget extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           height: 90,
           decoration: BoxDecoration(
-            color: FlutterFlowTheme.of(context).secondaryBackground,
+            color: FlutterFlowTheme.of(context).primaryBackground,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.max,
@@ -39,14 +40,13 @@ class FigureListRowWidget extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          figure['cover'],
-                          width: 74,
-                          height: 74,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                          borderRadius: BorderRadius.circular(8),
+                          child: HZYCachedNetWorkImageWidget(
+                            imageUrl: figure['cover'],
+                            width: 74,
+                            height: 74,
+                            fit: BoxFit.cover,
+                          )),
                     ),
                   ),
                 ],

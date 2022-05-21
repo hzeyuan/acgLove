@@ -1,15 +1,16 @@
 import 'dart:convert';
 
+import 'package:acg_love/page/about_page_widget.dart';
 import 'package:acg_love/page/login_page_widget.dart';
+import 'package:acg_love/page/suggest_page_widget.dart';
+import 'package:acg_love/page/traceanime_Page/result_page_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../app_provider.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ProfileWidget extends ConsumerStatefulWidget {
   const ProfileWidget({Key key}) : super(key: key);
@@ -22,10 +23,34 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
   // 是否为黑暗主题模式
   bool isDarkMode = FlutterFlowTheme.themeMode == ThemeMode.dark;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final Map<String, dynamic> userInfo = json.decode(FFAppState().userInfo);
+
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> userInfo = json.decode(FFAppState().userInfo);
     bool isLogin = ref.watch(isLoginProvider.state).state;
+    // 渲染头像
+    final renderAvatar = () {
+      if (!isLogin) {
+        return Image.asset(
+          'assets/images/default_avatar.jpg',
+        );
+      }
+
+      bool isBase64 = userInfo['avatar'].startsWith('data:image');
+
+      if (isBase64) {
+        Image.memory(
+          base64.decode(userInfo['avatar'] != null
+              ? userInfo['avatar'].split(',')[1]
+              : ''),
+          fit: BoxFit.fill, //填充
+          gaplessPlayback: true, //防止重绘
+        );
+      } else {
+        return new Image.network(userInfo['avatar'], fit: BoxFit.fill);
+      }
+    };
+
     // 是否已经登录
     List<SingleChildRenderObjectWidget> Function() loginInfoWidget = () {
       if (isLogin) {
@@ -36,7 +61,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
               userInfo['username'] ?? '',
               style: FlutterFlowTheme.of(context).title2.override(
                     fontFamily: 'Lexend Deca',
-                    color: Color(0xFF090F13),
+                    color: FlutterFlowTheme.of(context).primaryText,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
@@ -75,7 +100,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
               options: FFButtonOptions(
                 width: 108,
                 height: 36,
-                color: Colors.white,
+                color: FlutterFlowTheme.of(context).primaryBackground,
                 textStyle: FlutterFlowTheme.of(context).subtitle2.override(
                       fontFamily: 'Outfit',
                       color: Color(0xFF4B39EF),
@@ -84,8 +109,8 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                     ),
                 elevation: 3,
                 borderSide: BorderSide(
-                  color: Colors.transparent,
-                  width: 1,
+                  color: FlutterFlowTheme.of(context).lineColor,
+                  width: 0.5,
                 ),
                 borderRadius: 8,
               ),
@@ -96,7 +121,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
     };
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Color(0xFFF1F4F8),
+      backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -133,17 +158,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                               ),
-                              child: isLogin
-                                  ? Image.memory(
-                                      base64.decode(userInfo['avatar'] != null
-                                          ? userInfo['avatar'].split(',')[1]
-                                          : ''),
-                                      fit: BoxFit.fill, //填充
-                                      gaplessPlayback: true, //防止重绘
-                                    )
-                                  : Image.asset(
-                                      'assets/images/default_avatar.jpg',
-                                    ),
+                              child: renderAvatar(),
                             ),
                           ),
                         ),
@@ -161,7 +176,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: FlutterFlowTheme.of(context).primaryBtnText,
+                color: FlutterFlowTheme.of(context).primaryBackground,
                 shape: BoxShape.rectangle,
               ),
               child: Padding(
@@ -182,20 +197,33 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.favorite,
-                          color: FlutterFlowTheme.of(context).primaryColor,
-                          size: 24,
-                        ),
-                        Text(
-                          '喜欢',
-                          style:
-                              FlutterFlowTheme.of(context).bodyText1.override(
+                        InkWell(
+                          onTap: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TraceAnimeWidget(),
+                                ));
+                          },
+                          child: Column(children: [
+                            Icon(
+                              Icons.favorite,
+                              color: FlutterFlowTheme.of(context).primaryColor,
+                              size: 24,
+                            ),
+                            Text(
+                              '喜欢',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyText1
+                                  .override(
                                     fontFamily: 'Poppins',
-                                    color: Colors.black,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
                                     fontWeight: FontWeight.normal,
                                   ),
-                        ),
+                            ),
+                          ]),
+                        )
                       ],
                     ),
                     Column(
@@ -210,12 +238,13 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                         ),
                         Text(
                           '任务',
-                          style:
-                              FlutterFlowTheme.of(context).bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                          style: FlutterFlowTheme.of(context)
+                              .bodyText1
+                              .override(
+                                fontFamily: 'Poppins',
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                fontWeight: FontWeight.normal,
+                              ),
                         ),
                       ],
                     ),
@@ -231,12 +260,13 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                         ),
                         Text(
                           '发布',
-                          style:
-                              FlutterFlowTheme.of(context).bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                          style: FlutterFlowTheme.of(context)
+                              .bodyText1
+                              .override(
+                                fontFamily: 'Poppins',
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                fontWeight: FontWeight.normal,
+                              ),
                         ),
                       ],
                     ),
@@ -252,12 +282,13 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                         ),
                         Text(
                           '时间轴',
-                          style:
-                              FlutterFlowTheme.of(context).bodyText1.override(
-                                    fontFamily: 'Poppins',
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                          style: FlutterFlowTheme.of(context)
+                              .bodyText1
+                              .override(
+                                fontFamily: 'Poppins',
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                fontWeight: FontWeight.normal,
+                              ),
                         ),
                       ],
                     ),
@@ -286,11 +317,12 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                               width: MediaQuery.of(context).size.width,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: FlutterFlowTheme.of(context)
+                                    .primaryBackground,
                                 shape: BoxShape.rectangle,
                                 border: Border.all(
-                                  color: Color(0xFFF1F4F8),
-                                  width: 1,
+                                  color: FlutterFlowTheme.of(context).lineColor,
+                                  width: 0.5,
                                 ),
                               ),
                               child: Padding(
@@ -317,7 +349,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                                             .bodyText1
                                             .override(
                                               fontFamily: 'Lexend Deca',
-                                              color: Color(0xFF090F13),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
                                               fontSize: 14,
                                               fontWeight: FontWeight.normal,
                                             ),
@@ -370,11 +404,12 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                               width: MediaQuery.of(context).size.width,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: FlutterFlowTheme.of(context)
+                                    .primaryBackground,
                                 shape: BoxShape.rectangle,
                                 border: Border.all(
-                                  color: Color(0xFFF1F4F8),
-                                  width: 1,
+                                  color: FlutterFlowTheme.of(context).lineColor,
+                                  width: 0.5,
                                 ),
                               ),
                               child: Padding(
@@ -401,7 +436,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                                             .bodyText1
                                             .override(
                                               fontFamily: 'Lexend Deca',
-                                              color: Color(0xFF090F13),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
                                               fontSize: 14,
                                               fontWeight: FontWeight.normal,
                                             ),
@@ -434,61 +471,79 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                             child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.rectangle,
-                                border: Border.all(
-                                  color: Color(0xFFF1F4F8),
-                                  width: 1,
+                                width: MediaQuery.of(context).size.width,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context)
+                                      .primaryBackground,
+                                  shape: BoxShape.rectangle,
+                                  border: Border.all(
+                                    color:
+                                        FlutterFlowTheme.of(context).lineColor,
+                                    width: 0.5,
+                                  ),
                                 ),
-                              ),
-                              child: Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          12, 0, 0, 0),
-                                      child: Icon(
-                                        Icons.subtitles_rounded,
-                                        color: Color(0xFF4B39EF),
-                                        size: 24,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          12, 0, 0, 0),
-                                      child: Text(
-                                        '意见反馈',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyText1
-                                            .override(
-                                              fontFamily: 'Lexend Deca',
-                                              color: Color(0xFF090F13),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.normal,
-                                            ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: AlignmentDirectional(0.9, 0),
-                                        child: Icon(
-                                          Icons.arrow_forward_ios,
-                                          color: Color(0xFF95A1AC),
-                                          size: 18,
+                                child: InkWell(
+                                  onTap: () {
+                                    print('意见反馈');
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SuggestPageWidget(),
+                                        ));
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        8, 0, 8, 0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  12, 0, 0, 0),
+                                          child: Icon(
+                                            Icons.subtitles_rounded,
+                                            color: Color(0xFF4B39EF),
+                                            size: 24,
+                                          ),
                                         ),
-                                      ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  12, 0, 0, 0),
+                                          child: Text(
+                                            '意见反馈',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyText1
+                                                .override(
+                                                  fontFamily: 'Lexend Deca',
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryText,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Align(
+                                            alignment:
+                                                AlignmentDirectional(0.9, 0),
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: Color(0xFF95A1AC),
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                  ),
+                                )),
                           ),
                         ),
                       ],
@@ -501,60 +556,77 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                             child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.rectangle,
-                                border: Border.all(
-                                  color: Color(0xFFF1F4F8),
-                                  width: 1,
+                                width: MediaQuery.of(context).size.width,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context)
+                                      .primaryBackground,
+                                  shape: BoxShape.rectangle,
+                                  border: Border.all(
+                                    color:
+                                        FlutterFlowTheme.of(context).lineColor,
+                                    width: 0.5,
+                                  ),
                                 ),
-                              ),
-                              child: Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          12, 0, 0, 0),
-                                      child: Icon(
-                                        Icons.subtitles_rounded,
-                                        color: Color(0xFF4B39EF),
-                                        size: 24,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          12, 0, 0, 0),
-                                      child: Text(
-                                        '关于我们',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyText1
-                                            .override(
-                                              fontFamily: 'Lexend Deca',
-                                              color: Color(0xFF090F13),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.normal,
-                                            ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: AlignmentDirectional(0.9, 0),
-                                        child: Icon(
-                                          Icons.arrow_forward_ios,
-                                          color: Color(0xFF95A1AC),
-                                          size: 18,
+                                child: InkWell(
+                                  onTap: () {
+                                    print('关于');
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AboutPageWidget(),
+                                        ));
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        8, 0, 8, 0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  12, 0, 0, 0),
+                                          child: Icon(
+                                            Icons.subtitles_rounded,
+                                            color: Color(0xFF4B39EF),
+                                            size: 24,
+                                          ),
                                         ),
-                                      ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  12, 0, 0, 0),
+                                          child: Text(
+                                            '关于我们',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyText1
+                                                .override(
+                                                  fontFamily: 'Lexend Deca',
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryText,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Align(
+                                            alignment:
+                                                AlignmentDirectional(0.9, 0),
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: Color(0xFF95A1AC),
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                  ),
+                                )),
                           ),
                         ),
                       ],
@@ -577,7 +649,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                       width: MediaQuery.of(context).size.width,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFFEFE),
+                        color: FlutterFlowTheme.of(context).primaryBackground,
                       ),
                       child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
@@ -606,6 +678,8 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                                     .override(
                                       fontFamily: 'Poppins',
                                       fontWeight: FontWeight.normal,
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
                                     ),
                               ),
                             ),
@@ -642,12 +716,14 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                           print('Button pressed ...');
                           FFAppState().isLogin = false;
                           ref.read(isLoginProvider.state).state = false;
+                          FFAppState().userInfo =
+                              json.encode({'email': '', 'avatar': ''});
                         },
                         text: '退出登录',
                         options: FFButtonOptions(
                           width: 90,
                           height: 40,
-                          color: Colors.white,
+                          color: FlutterFlowTheme.of(context).primaryBackground,
                           textStyle:
                               FlutterFlowTheme.of(context).bodyText2.override(
                                     fontFamily: 'Lexend Deca',
@@ -658,7 +734,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                           elevation: 3,
                           borderSide: BorderSide(
                             color: Colors.transparent,
-                            width: 1,
+                            width: 0.5,
                           ),
                           borderRadius: 8,
                         ),

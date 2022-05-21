@@ -4,6 +4,7 @@ import 'dart:core';
 
 import 'package:http/http.dart' as http;
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 
 enum ApiCallType {
   GET,
@@ -21,8 +22,14 @@ enum BodyType {
 }
 
 class ApiCallRecord extends Equatable {
-  ApiCallRecord(this.callName, this.apiUrl, this.headers, this.params,
-      this.body, this.bodyType);
+  ApiCallRecord(
+    this.callName,
+    this.apiUrl,
+    this.headers,
+    this.params,
+    this.body,
+    this.bodyType,
+  );
   final String callName;
   final String apiUrl;
   final Map<String, dynamic> headers;
@@ -72,7 +79,9 @@ class ApiManager {
       http.Response response, bool returnBody) {
     var jsonBody;
     try {
-      jsonBody = returnBody ? json.decode(response.body) : null;
+      jsonBody =
+          returnBody ? json.decode(utf8.decode(response.bodyBytes)) : null;
+      // jsonBody = returnBody ? json.decode(response.body) : null;
     } catch (_) {}
     return ApiCallResponse(jsonBody, response.statusCode);
   }
@@ -196,5 +205,30 @@ class ApiManager {
     }
 
     return result;
+  }
+
+  Future<String> asyncFileUpload({String url, XFile file}) async {
+    var headers = {
+      'content-type': 'multipart/form-data',
+      'Accept': 'application/json',
+    };
+    //create multipart request for POST or PATCH method
+    var request = http.MultipartRequest("POST", Uri.parse(url));
+    request.headers.addAll(headers);
+
+    //create multipart using filepath, string or bytes
+    var pic = await http.MultipartFile.fromPath("image", file.path);
+    //add multipart to request
+    request.files.add(pic);
+    try {
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      print(response.reasonPhrase);
+      // return response;
+      return response.body;
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
   }
 }

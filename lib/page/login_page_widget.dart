@@ -49,6 +49,7 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
     passwordController2 = TextEditingController();
     passwordVisibility2 = false;
     codeController = TextEditingController();
+    isAgree = FFAppState().agreePolicy;
   }
 
   @override
@@ -63,6 +64,7 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
               onPressed: () async {
                 setState(() => isAgree = !isAgree);
                 print('隐私协议');
+                FFAppState().agreePolicy = isAgree;
                 if (isAgree) {
                   SharesdkPlugin.uploadPrivacyPermissionStatus(1,
                       (bool success) {
@@ -142,6 +144,10 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
       if (!loginFormKey.currentState.validate()) {
         return;
       }
+      if (!isAgree) {
+        Fluttertoast.showToast(msg: "请先同意隐私协议");
+        return;
+      }
       EasyLoading.show(status: '登录中..', maskType: EasyLoadingMaskType.black);
 
       ApiCallResponse resp = await AuthApiCall.loginApiCall(
@@ -152,7 +158,6 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
       if (resp?.statusCode == 200) {
         print('Register success');
         // 注册成功后跳转到登录页面
-        print('resp ${resp?.jsonBody}');
         FFAppState().isLogin = true;
         FFAppState().jwtToken = resp?.jsonBody['jwt'];
         FFAppState().userInfo = json.encode(resp?.jsonBody['user']);
@@ -169,6 +174,29 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
             textColor: Colors.white,
             fontSize: 12.0);
       }
+    }
+
+    // 微信登录
+    wechatLoginAction() async {
+      if (!isAgree) {
+        Fluttertoast.showToast(msg: "请先同意隐私协议");
+        return;
+      }
+      EasyLoading.show(status: '登录中..', maskType: EasyLoadingMaskType.black);
+      print('Button-Wechat pressed ...');
+
+      SharesdkPlugin.getUserInfo(ShareSDKPlatforms.wechatSession,
+          (SSDKResponseState state, dynamic user, SSDKError erro) async {
+        Map<String, dynamic> data = json.decode(user['dbInfo']);
+        ApiCallResponse resp =
+            await AuthApiCall.wechatLoginApiCall(data['token'], data['openid']);
+        EasyLoading.dismiss();
+        FFAppState().isLogin = true;
+        FFAppState().jwtToken = resp?.jsonBody['jwt'];
+        FFAppState().userInfo = json.encode(resp?.jsonBody['user']);
+        ref.read(isLoginProvider.state).state = true;
+        Navigator.pop(context, true);
+      });
     }
 
     // 验证邮箱
@@ -418,21 +446,7 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
                       ),
                       alignment: AlignmentDirectional(0, 0),
                       child: InkWell(
-                        onTap: () {
-                          print('Button-Wechat pressed ...');
-                          SharesdkPlugin.auth(
-                              ShareSDKPlatforms.wechatSession, Map(),
-                              (SSDKResponseState state, dynamic user,
-                                  SSDKError error) {
-                            print('error:$error');
-                          });
-                          SharesdkPlugin.getUserInfo(
-                              ShareSDKPlatforms.wechatSession,
-                              (SSDKResponseState state, dynamic user,
-                                  SSDKError error) {
-                            print('user:$user');
-                          });
-                        },
+                        onTap: wechatLoginAction,
                         child: FaIcon(
                           FontAwesomeIcons.weixin,
                           color: Colors.white,
@@ -733,120 +747,6 @@ class _LoginPageWidgetState extends ConsumerState<LoginPageWidget> {
                   ),
                   borderRadius: 8,
                 ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 12),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
-                    child: Text(
-                      '其他登录方式',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Lexend Deca',
-                            color: Color(0x98FFFFFF),
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24, 8, 24, 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF0F1113),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 5,
-                          color: Color(0x3314181B),
-                          offset: Offset(0, 2),
-                        )
-                      ],
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: AlignmentDirectional(0, 0),
-                    child: FaIcon(
-                      FontAwesomeIcons.google,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF0F1113),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 5,
-                          color: Color(0x3314181B),
-                          offset: Offset(0, 2),
-                        )
-                      ],
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: AlignmentDirectional(0, 0),
-                    child: FaIcon(
-                      FontAwesomeIcons.apple,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF0F1113),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 5,
-                          color: Color(0x3314181B),
-                          offset: Offset(0, 2),
-                        )
-                      ],
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: AlignmentDirectional(0, 0),
-                    child: FaIcon(
-                      FontAwesomeIcons.facebookF,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF0F1113),
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 5,
-                          color: Color(0x3314181B),
-                          offset: Offset(0, 2),
-                        )
-                      ],
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: AlignmentDirectional(0, 0),
-                    child: Icon(
-                      Icons.phone_sharp,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ],
               ),
             ),
           ],

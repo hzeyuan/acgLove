@@ -37,7 +37,7 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  // color: Colors,
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 4,
@@ -52,10 +52,10 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                   borderRadius: 8,
                   borderWidth: 1,
                   buttonSize: 40,
-                  fillColor: Colors.white,
+                  fillColor: FlutterFlowTheme.of(context).primaryBackground,
                   icon: Icon(
                     Icons.arrow_back_rounded,
-                    color: Color(0xFF57636C),
+                    color: FlutterFlowTheme.of(context).primaryText,
                     size: 20,
                   ),
                   onPressed: () async {
@@ -82,10 +82,10 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                   borderRadius: 8,
                   borderWidth: 1,
                   buttonSize: 40,
-                  fillColor: Colors.white,
+                  fillColor: FlutterFlowTheme.of(context).primaryBackground,
                   icon: Icon(
                     Icons.ios_share,
-                    color: Color(0xFF57636C),
+                    color: FlutterFlowTheme.of(context).primaryText,
                     size: 20,
                   ),
                   onPressed: () async {
@@ -136,8 +136,8 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
     };
     // 标签栏
     final figureTabbar = TabBar(
-      labelColor: Color(0xFF1D2429),
-      unselectedLabelColor: Color(0xFF57636C),
+      labelColor: FlutterFlowTheme.of(context).primaryText,
+      unselectedLabelColor: FlutterFlowTheme.of(context).primaryText,
       labelStyle: FlutterFlowTheme.of(context).subtitle1.override(
             fontFamily: 'Open Sans',
             color: Color(0xFF1D2429),
@@ -208,7 +208,6 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                 'Hastings & 25k followers',
                 style: FlutterFlowTheme.of(context).bodyText1.override(
                       fontFamily: 'Open Sans',
-                      color: Color(0xFF1D2429),
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
                     ),
@@ -232,10 +231,7 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '$key：',
-                    style: FlutterFlowTheme.of(context).bodyText1,
-                  ),
+                  Text('$key：', style: FlutterFlowTheme.of(context).bodyText1),
                 ],
               ),
             ));
@@ -245,15 +241,10 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                 children: [
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                    ),
                     child: Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                      child: Text(
-                        value,
-                        style: FlutterFlowTheme.of(context).bodyText1,
-                      ),
+                      child: Text(value,
+                          style: FlutterFlowTheme.of(context).bodyText1),
                     ),
                   ),
                 ],
@@ -313,13 +304,14 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                       children: [
                         Text(
                           '4 hour session',
-                          style:
-                              FlutterFlowTheme.of(context).bodyText2.override(
-                                    fontFamily: 'Open Sans',
-                                    color: Color(0xFF57636C),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                          style: FlutterFlowTheme.of(context)
+                              .bodyText2
+                              .override(
+                                fontFamily: 'Open Sans',
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
                         ),
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
@@ -335,13 +327,14 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                         ),
                         Text(
                           '\$500',
-                          style:
-                              FlutterFlowTheme.of(context).subtitle1.override(
-                                    fontFamily: 'Open Sans',
-                                    color: Color(0xFF57636C),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: FlutterFlowTheme.of(context)
+                              .subtitle1
+                              .override(
+                                fontFamily: 'Open Sans',
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                       ],
                     ),
@@ -374,13 +367,14 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                       children: [
                         Text(
                           '2 Week Intensive',
-                          style:
-                              FlutterFlowTheme.of(context).bodyText2.override(
-                                    fontFamily: 'Open Sans',
-                                    color: Color(0xFF57636C),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                          style: FlutterFlowTheme.of(context)
+                              .bodyText2
+                              .override(
+                                fontFamily: 'Open Sans',
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
                         ),
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 8),
@@ -396,13 +390,14 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                         ),
                         Text(
                           '\$2,000',
-                          style:
-                              FlutterFlowTheme.of(context).subtitle1.override(
-                                    fontFamily: 'Open Sans',
-                                    color: Color(0xFF57636C),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: FlutterFlowTheme.of(context)
+                              .subtitle1
+                              .override(
+                                fontFamily: 'Open Sans',
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                       ],
                     ),
@@ -526,7 +521,8 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                                   width: double.infinity,
                                   height: 700,
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
                                     boxShadow: [
                                       BoxShadow(
                                         blurRadius: 4,
@@ -563,7 +559,10 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                                                     .title3
                                                     .override(
                                                       fontFamily: 'Open Sans',
-                                                      color: Color(0xFF1D2429),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primaryText,
                                                       fontSize: 20,
                                                       fontWeight:
                                                           FontWeight.normal,
@@ -614,7 +613,10 @@ class _DetailPageWidgetState extends State<DetailPageWidget> {
                                                     .subtitle2
                                                     .override(
                                                       fontFamily: 'Open Sans',
-                                                      color: Color(0xFF57636C),
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primaryText,
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.normal,

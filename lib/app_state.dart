@@ -16,26 +16,19 @@ class FFAppState {
 
   Future initializePersistedState() async {
     prefs = await SharedPreferences.getInstance();
-    _isLogin = prefs.getBool('ff_isLogin') ?? _isLogin;
-    _userInfo = prefs.getBool('ff_userInfo') ?? _userInfo;
+    _isLogin = prefs.getBool('ff_isLogin') ?? _isLogin; // 是否登录
+    _userInfo = prefs.getBool('ff_userInfo') ?? _userInfo; // 用户信息
     _jwtToken = prefs.getString('ff_jwtToken') ?? _jwtToken;
+    _agreePolicy = prefs.getString('ff_agreePolicy') ?? _agreePolicy;
   }
 
   SharedPreferences prefs;
 
   // 用户信息
   String _userInfo = json.encode({
-    'userId': '',
-    'userName': '',
-    'userAvatar': '',
-    'userEmail': '',
-    'userPhone': '',
-    'userGender': '',
-    'userBirthday': '',
-    'userAddress': '',
-    'userLat': '',
-    'userLng': '',
-    'userToken': '',
+    'avatar': '',
+    'email': '',
+    'username': '',
   });
   String get userInfo => _userInfo;
   set userInfo(String _value) {
@@ -57,6 +50,14 @@ class FFAppState {
   set jwtToken(String _value) {
     _jwtToken = _value;
     prefs.setString('ff_jwtToken', _value);
+  }
+
+  // 是否阅读隐私
+  bool _agreePolicy = false;
+  bool get agreePolicy => _agreePolicy;
+  set agreePolicy(bool _value) {
+    _agreePolicy = _value;
+    prefs.setBool('ff_agreePolicy', _value);
   }
 }
 

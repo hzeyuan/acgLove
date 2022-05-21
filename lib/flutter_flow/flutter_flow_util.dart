@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +13,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../main.dart';
 
 import 'lat_lng.dart';
+
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 export 'lat_lng.dart';
 export 'place.dart';
@@ -195,4 +201,32 @@ extension FFStringExt on String {
       maxChars != null && length > maxChars
           ? replaceRange(maxChars, null, replacement)
           : this;
+}
+
+saveFile(String imageUrl, {bool isBase64: false}) async {
+  // var appDocDir = await getTemporaryDirectory();
+
+  Uint8List imageBytes;
+  if (isBase64 == true) {
+    /// 保存资源图片
+    imageBytes = base64.decode(imageUrl);
+    // imageBytes = bytes.buffer.asUint8List();
+  } else {
+    /// 保存网络图片
+    CachedNetworkImage image = CachedNetworkImage(imageUrl: imageUrl);
+    DefaultCacheManager manager = image.cacheManager ?? DefaultCacheManager();
+    Map<String, String> headers = image.httpHeaders;
+    File file = await manager.getSingleFile(
+      image.imageUrl,
+      headers: headers,
+    );
+    imageBytes = await file.readAsBytes();
+  }
+
+  /// 保存图片
+  final result = await ImageGallerySaver.saveImage(imageBytes);
+
+  if (result == null || result == '') throw '图片保存失败';
+
+  print("保存成功");
 }
